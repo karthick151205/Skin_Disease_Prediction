@@ -215,7 +215,17 @@ To deploy this project to the web for public access, host the **FastAPI Backend*
 ### Step 1: Host the FastAPI Backend (Render / Hugging Face Spaces / Railway)
 
 #### Option A: Deploy on Render.com (Free Web Service)
-1. Push your repository to GitHub.
+1. **Push Model Weights to GitHub (Git LFS)**:
+   Since `model.safetensors` is ~343MB, use Git LFS so GitHub includes it in your repo:
+   ```bash
+   git lfs install
+   git lfs track "model.safetensors"
+   git add .gitattributes model.safetensors .gitignore
+   git commit -m "Include model weights using Git LFS"
+   git push origin main
+   ```
+   *(Alternative: Set environment variable `MODEL_URL` in Render to a direct download link of `model.safetensors`, or set `HF_MODEL_ID` to a HuggingFace Model repo)*.
+
 2. Sign up at [Render.com](https://render.com) and click **New > Web Service**.
 3. Connect your GitHub repository.
 4. Set the following parameters:

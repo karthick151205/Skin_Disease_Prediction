@@ -101,11 +101,44 @@ DISEASE_METADATA = {
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global processor, model
-    model_path = os.path.abspath(".")
-    print(f"[FASTAPI] Loading Vision Transformer model from {model_path}...")
+    root_dir = os.path.abspath(".")
+    local_weights = os.path.join(root_dir, "model.safetensors")
+    local_weights_alt = os.path.join(root_dir, "pytorch_model.bin")
+    
+    # Check if local model weights exist
+    has_local = os.path.exists(local_weights) or os.path.exists(local_weights_alt)
+    
+    # 1. Download if missing and MODEL_URL is set in environment
+    model_url = os.getenv("MODEL_URL")
+    if not has_local and model_url:
+        print(f"[FASTAPI] Downloading model.safetensors from {model_url}...")
+        try:
+            import urllib.request
+            urllib.request.urlretrieve(model_url, local_weights)
+            has_local = os.path.exists(local_weights)
+            print("[FASTAPI] Download completed successfully!")
+        except Exception as dl_err:
+            print(f"[FASTAPI WARNING] Failed to download weights from MODEL_URL: {dl_err}")
+
+    # Determine model loading source
+    if has_local:
+        model_source = root_dir
+        print(f"[FASTAPI] Loading model from local directory: {model_source}")
+    else:
+        # Fallback to HuggingFace Model Repo or default base ViT model
+        model_source = os.getenv("HF_MODEL_ID", "google/vit-base-patch16-224-in21k")
+        print(f"[FASTAPI WARNING] Local model.safetensors not found! Falling back to HuggingFace Hub: {model_source}")
+
     try:
-        processor = AutoImageProcessor.from_pretrained(model_path)
-        model = AutoModelForImageClassification.from_pretrained(model_path)
+        processor = AutoImageProcessor.from_pretrained(model_source)
+        if has_local:
+            model = AutoModelForImageClassification.from_pretrained(model_source)
+        else:
+            model = AutoModelForImageClassification.from_pretrained(
+                model_source,
+                num_labels=7,
+                ignore_mismatched_sizes=True
+            )
         model.eval()
         print("[FASTAPI] Model loaded successfully!")
     except Exception as e:
