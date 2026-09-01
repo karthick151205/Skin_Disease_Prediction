@@ -214,15 +214,20 @@ To deploy this project to the web for public access, host the **FastAPI Backend*
 
 ### Step 1: Host the FastAPI Backend
 
-#### Option A: Deploy on Hugging Face Spaces ⭐ (RECOMMENDED - 16 GB Free RAM)
-Render's free tier has a strict **512 MB RAM limit**, which can trigger `Out of Memory` errors when loading PyTorch deep learning models. **Hugging Face Spaces provides 16 GB of RAM for free!**
+#### Option A: Deploy on Hugging Face Spaces ⭐ (100% FREE - 16 GB RAM, No Docker Needed)
+*Hugging Face Spaces provides **16 GB of RAM for FREE** without needing Docker or credit cards!*
 
 1. Go to [huggingface.co/spaces](https://huggingface.co/spaces) and click **Create new Space**.
 2. Set Space Name: `skincare-ai-backend`
-3. Select SDK: **Docker** (or **FastAPI**).
+3. Select SDK: **FastAPI** (No Docker required!).
 4. Select Space Hardware: **CPU basic • 2 vCPU • 16 GB RAM (Free)**.
-5. Upload or git push your repository files (`Dockerfile`, `server.py`, `model.safetensors`, `config.json`, `preprocessor_config.json`, `requirements.txt`).
-6. Once built, copy your public API URL (e.g. `https://your-username-skincare-ai-backend.hf.space/api/predict`).
+5. Upload these files from your computer using their web uploader or git:
+   - `server.py` (rename to `app.py` or keep `server.py`)
+   - `model.safetensors`
+   - `config.json`
+   - `preprocessor_config.json`
+   - `requirements.txt`
+6. Click **Create Space**. Hugging Face builds and hosts your PyTorch API server automatically!
 
 ---
 
