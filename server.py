@@ -132,11 +132,15 @@ async def lifespan(app: FastAPI):
     try:
         processor = AutoImageProcessor.from_pretrained(model_source)
         if has_local:
-            model = AutoModelForImageClassification.from_pretrained(model_source)
+            model = AutoModelForImageClassification.from_pretrained(
+                model_source,
+                low_cpu_mem_usage=True
+            )
         else:
             model = AutoModelForImageClassification.from_pretrained(
                 model_source,
                 num_labels=7,
+                low_cpu_mem_usage=True,
                 ignore_mismatched_sizes=True
             )
         model.eval()

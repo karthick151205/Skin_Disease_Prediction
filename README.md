@@ -212,25 +212,29 @@ Fine-tuned Vision Transformer (ViT-16) training progress over 5 epochs on HAM100
 
 To deploy this project to the web for public access, host the **FastAPI Backend** and **React Frontend** using free / low-cost cloud platforms.
 
-### Step 1: Host the FastAPI Backend (Render / Hugging Face Spaces / Railway)
+### Step 1: Host the FastAPI Backend
 
-#### Option A: Deploy on Render.com (Free Web Service)
-1. **Push Model Weights to GitHub (Git LFS)**:
-   Since `model.safetensors` is ~343MB, use Git LFS so GitHub includes it in your repo:
-   ```bash
-   git lfs install
-   git lfs track "model.safetensors"
-   git add .gitattributes model.safetensors .gitignore
-   git commit -m "Include model weights using Git LFS"
-   git push origin main
-   ```
-   *(Alternative: Set environment variable `MODEL_URL` in Render to a direct download link of `model.safetensors`, or set `HF_MODEL_ID` to a HuggingFace Model repo)*.
+#### Option A: Deploy on Hugging Face Spaces ⭐ (RECOMMENDED - 16 GB Free RAM)
+Render's free tier has a strict **512 MB RAM limit**, which can trigger `Out of Memory` errors when loading PyTorch deep learning models. **Hugging Face Spaces provides 16 GB of RAM for free!**
 
-2. Sign up at [Render.com](https://render.com) and click **New > Web Service**.
+1. Go to [huggingface.co/spaces](https://huggingface.co/spaces) and click **Create new Space**.
+2. Set Space Name: `skincare-ai-backend`
+3. Select SDK: **Docker** (or **FastAPI**).
+4. Select Space Hardware: **CPU basic • 2 vCPU • 16 GB RAM (Free)**.
+5. Upload or git push your repository files (`Dockerfile`, `server.py`, `model.safetensors`, `config.json`, `preprocessor_config.json`, `requirements.txt`).
+6. Once built, copy your public API URL (e.g. `https://your-username-skincare-ai-backend.hf.space/api/predict`).
+
+---
+
+#### Option B: Deploy on Render.com (Free 512 MB Web Service)
+*(Note: Requires `low_cpu_mem_usage=True` enabled in `server.py` to fit within 512MB RAM limit)*
+
+1. Push your repository to GitHub (use `git lfs` for `model.safetensors`).
+2. Sign up at [Render.com](https://render.com) ➔ Click **New > Web Service**.
 3. Connect your GitHub repository.
-4. Set the following parameters:
+4. Set parameters:
    - **Environment**: `Python`
-   - **Build Command**: `pip install -r requirements.txt`
+   - **Build Command**: `pip install --no-cache-dir -r requirements.txt`
    - **Start Command**: `python -m uvicorn server:app --host 0.0.0.0 --port $PORT`
 5. Deploy service. Once finished, copy your public backend URL (e.g. `https://skincare-api.onrender.com`).
 
