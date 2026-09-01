@@ -6,4 +6,3 @@ torchvision>=0.15.0
 transformers>=4.38.0
 pillow>=10.0.0
 pandas>=2.0.0
-gradio>=4.0.0
