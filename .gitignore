@@ -1,2 +1,34 @@
-"model.safetensors" 
-"model.safetensors" 
+# Model weights & large binaries
+model.safetensors
+*.safetensors
+*.bin
+*.onnx
+
+# HAM10000 Dataset & Image Folders
+HAM10000_dataset/
+HAM10000_images_part_1/
+HAM10000_images_part_2/
+HAM10000_split/
+HAM10000_metadata.csv
+
+# Image files
+banner.png
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.gif
+*.bmp
+
+# Python & Virtual Environments
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Frontend Node Modules & Builds
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
