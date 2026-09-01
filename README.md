@@ -35,7 +35,6 @@ The application features a full-stack architecture combining a **FastAPI PyTorch
 ```
 Skin_Model/
 ├── server.py                   # FastAPI backend server (PyTorch ViT inference API on port 8000)
-├── app.py                      # Legacy Streamlit web interface
 ├── model.safetensors           # Fine-tuned Vision Transformer model weights (343 MB)
 ├── config.json                 # HuggingFace ViT architecture & id2label mapping
 ├── preprocessor_config.json    # Image preprocessing parameters (224x224, normalization)
@@ -132,8 +131,6 @@ cd ..
 
 ## 🏃 Running the Application
 
-### Method 1: React + FastAPI (Recommended)
-
 Run the backend API server and frontend development server in two separate terminal windows:
 
 #### Terminal 1: Launch FastAPI Backend
@@ -148,17 +145,6 @@ cd frontend
 npm run dev
 ```
 *(Open your browser at **`http://localhost:5173`**)*
-
----
-
-### Method 2: Legacy Streamlit Interface
-
-If you prefer to run the single-file Streamlit interface:
-
-```bash
-streamlit run app.py
-```
-*(Open your browser at **`http://localhost:8501`**)*
 
 ---
 
@@ -219,6 +205,42 @@ Fine-tuned Vision Transformer (ViT-16) training progress over 5 epochs on HAM100
 | **3** | 0.2959 | 90.28% | 0.1790 | 95.30% |
 | **4** | 0.1595 | 94.82% | 0.1498 | 95.55% |
 | **5** | **0.1208** | **96.14%** | **0.1000** | **96.95%** |
+
+---
+
+## 🌐 Web Hosting & Deployment Guide
+
+To deploy this project to the web for public access, host the **FastAPI Backend** and **React Frontend** using free / low-cost cloud platforms.
+
+### Step 1: Host the FastAPI Backend (Render / Hugging Face Spaces / Railway)
+
+#### Option A: Deploy on Render.com (Free Web Service)
+1. Push your repository to GitHub.
+2. Sign up at [Render.com](https://render.com) and click **New > Web Service**.
+3. Connect your GitHub repository.
+4. Set the following parameters:
+   - **Environment**: `Python`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `python -m uvicorn server:app --host 0.0.0.0 --port $PORT`
+5. Deploy service. Once finished, copy your public backend URL (e.g. `https://skincare-api.onrender.com`).
+
+#### Option B: Deploy on Hugging Face Spaces (Free CPU/GPU Docker/FastAPI)
+1. Create a new Space on [Hugging Face Spaces](https://huggingface.co/spaces).
+2. Choose **Docker** or **FastAPI** template.
+3. Upload `server.py`, `model.safetensors`, `config.json`, `preprocessor_config.json`, and `requirements.txt`.
+4. Copy the public space endpoint URL.
+
+---
+
+### Step 2: Host the React Frontend (Vercel / Netlify / Render)
+
+#### Deploy on Vercel (Recommended - Free & Fast)
+1. Sign up at [Vercel.com](https://vercel.com) and click **Add New > Project**.
+2. Import your GitHub repository.
+3. Set the **Root Directory** to `frontend`.
+4. Under **Environment Variables**, add:
+   - `VITE_API_URL`: `https://your-backend-url.onrender.com` (replace with your deployed FastAPI backend URL from Step 1).
+5. Click **Deploy**. Vercel will build your React app and provide a live URL (e.g. `https://skincare-ai.vercel.app`).
 
 ---
 

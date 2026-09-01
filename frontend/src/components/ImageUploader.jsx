@@ -3,11 +3,13 @@ import { UploadCloud, Image as ImageIcon, RefreshCw, Sparkles, CheckCircle2 } fr
 import ScanAnimation from './ScanAnimation';
 
 // Built-in high quality sample lesion data (encoded data URLs / placeholder sample triggers)
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 const SAMPLES = [
-  { id: 'bkl', label: 'Benign Keratosis', color: '#10b981', img: '/api/sample-image/bkl' },
-  { id: 'nv', label: 'Common Mole', color: '#10b981', img: '/api/sample-image/nv' },
-  { id: 'akiec', label: 'Sun Damage', color: '#f59e0b', img: '/api/sample-image/akiec' },
-  { id: 'mel', label: 'Melanoma (Urgent)', color: '#ef4444', img: '/api/sample-image/mel' },
+  { id: 'bkl', label: 'Benign Keratosis', color: '#10b981', img: `${API_BASE_URL}/api/sample-image/bkl` },
+  { id: 'nv', label: 'Common Mole', color: '#10b981', img: `${API_BASE_URL}/api/sample-image/nv` },
+  { id: 'akiec', label: 'Sun Damage', color: '#f59e0b', img: `${API_BASE_URL}/api/sample-image/akiec` },
+  { id: 'mel', label: 'Melanoma (Urgent)', color: '#ef4444', img: `${API_BASE_URL}/api/sample-image/mel` },
 ];
 
 export default function ImageUploader({ 

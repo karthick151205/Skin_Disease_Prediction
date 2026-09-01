@@ -6,7 +6,7 @@ import ImageUploader from './components/ImageUploader';
 import ResultsDashboard from './components/ResultsDashboard';
 import ScanHistory from './components/ScanHistory';
 
-const API_BASE_URL = '';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export default function App() {
   const [selectedFile, setSelectedFile] = useState(null);
