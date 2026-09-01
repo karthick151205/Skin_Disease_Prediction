@@ -108,15 +108,31 @@ export default function App() {
     try {
       setIsLoading(true);
       const res = await fetch(`${API_BASE_URL}/api/sample-image/${sampleId}`);
-      if (!res.ok) throw new Error("Could not fetch sample image");
-      const blob = await res.blob();
-      const file = new File([blob], `sample_${sampleId}.jpg`, { type: 'image/jpeg' });
-      handleImageSelect(file);
+      if (res.ok) {
+        const blob = await res.blob();
+        const file = new File([blob], `sample_${sampleId}.jpg`, { type: 'image/jpeg' });
+        return handleImageSelect(file);
+      }
     } catch (err) {
-      console.error("Failed to load sample image:", err);
-      setError("Could not load sample image from server.");
-      setIsLoading(false);
+      console.warn("Sample endpoint unreachable, generating browser fallback sample:", err);
     }
+
+    // Fallback: Generate canvas JPEG sample image locally
+    const canvas = document.createElement('canvas');
+    canvas.width = 224;
+    canvas.height = 224;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#e0ac69';
+    ctx.fillRect(0, 0, 224, 224);
+    ctx.beginPath();
+    ctx.arc(112, 112, 40, 0, 2 * Math.PI);
+    ctx.fillStyle = sampleId === 'mel' ? '#2d1b18' : sampleId === 'akiec' ? '#b7410e' : '#5c4033';
+    ctx.fill();
+
+    canvas.toBlob((blob) => {
+      const file = new File([blob], `sample_${sampleId}.jpeg`, { type: 'image/jpeg' });
+      handleImageSelect(file);
+    }, 'image/jpeg');
   };
 
   const handleReset = () => {

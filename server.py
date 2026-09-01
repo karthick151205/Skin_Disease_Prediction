@@ -215,16 +215,39 @@ def get_sample_list():
         for sample_id, info in SAMPLE_IMAGES.items()
     ]
 
+from fastapi.responses import FileResponse, StreamingResponse
+from PIL import ImageDraw
+
 @app.get("/api/sample-image/{sample_id}")
 def get_sample_image(sample_id: str):
     if sample_id not in SAMPLE_IMAGES:
-        raise HTTPException(status_code=404, detail="Sample image not found.")
+        sample_id = "nv"
     
-    file_path = os.path.abspath(SAMPLE_IMAGES[sample_id]["path"])
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="Sample file missing from disk.")
+    info = SAMPLE_IMAGES[sample_id]
+    file_path = os.path.abspath(info["path"])
     
-    return FileResponse(file_path, media_type="image/jpeg")
+    # Serve original local HAM10000 file if present
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type="image/jpeg")
+    
+    # Generate fallback synthetic skin lesion JPEG if dataset file is not present on cloud server
+    img = Image.new("RGB", (224, 224), color="#e2a76f")
+    draw = ImageDraw.Draw(img)
+    
+    # Draw characteristic lesion shape based on type
+    if sample_id == "mel":
+        draw.ellipse([70, 70, 154, 154], fill="#2b1714", outline="#5c1d13", width=3)
+    elif sample_id == "akiec":
+        draw.ellipse([80, 80, 144, 144], fill="#b8431e", outline="#8f2a0c", width=2)
+    elif sample_id == "bkl":
+        draw.ellipse([75, 75, 149, 149], fill="#6b4c35", outline="#422c1b", width=2)
+    else:
+        draw.ellipse([82, 82, 142, 142], fill="#4f3322", outline="#2b1a10", width=2)
+        
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG")
+    buf.seek(0)
+    return StreamingResponse(buf, media_type="image/jpeg")
 
 @app.post("/api/predict")
 async def predict(file: UploadFile = File(...)):
